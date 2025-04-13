@@ -263,6 +263,10 @@ export async function toggleSavedCar(carId) {
  * Get car details by ID
  */
 export async function getCarById(carId) {
+  if (!carId) {
+    throw new Error("Invalid car ID provided");
+  }
+  
   try {
     // Get current user if authenticated
     const { userId } = await auth();
