@@ -1,43 +1,77 @@
-import { getFeaturedCars } from "@/actions/home";
-import CarCard from "@/components/car-card";
-import HomeSearch from "@/components/home-search";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
-import { Button } from "@/components/ui/button";
+import { Suspense } from "react";
 import { bodyTypes, carMakes, faqItems } from "@/lib/data";
 import { SignedOut } from "@clerk/nextjs";
 import { Calendar, Car, ChevronRight, Shield } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { getFeaturedCars } from "@/actions/home";
+import CarCard from "@/components/car-card";
+
+// Import components lazily
+import dynamic from "next/dynamic";
+import { Button } from "@/components/ui/button";
+
+// Lazy load components that aren't needed immediately
+const HomeSearch = dynamic(() => import("@/components/home-search"), {
+  ssr: true,
+  loading: () => <div className="h-12 w-full bg-gray-100 rounded animate-pulse"></div>
+});
+
+const Accordion = dynamic(() => 
+  import("@/components/ui/accordion").then((mod) => mod.Accordion)
+);
+
+const AccordionContent = dynamic(() => 
+  import("@/components/ui/accordion").then((mod) => mod.AccordionContent)
+);
+
+const AccordionItem = dynamic(() => 
+  import("@/components/ui/accordion").then((mod) => mod.AccordionItem)
+);
+
+const AccordionTrigger = dynamic(() => 
+  import("@/components/ui/accordion").then((mod) => mod.AccordionTrigger)
+);
+
+// Instead of dynamically importing the FeaturedCarsSection component,
+// we'll use a client component wrapper
+const FeaturedCarsWrapper = dynamic(() => import("@/components/featuredCars"), {
+  ssr: true,
+  loading: () => (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {[1, 2, 3].map((i) => (
+        <div key={i} className="h-64 bg-gray-100 rounded animate-pulse"></div>
+      ))}
+    </div>
+  )
+});
 
 export default async function Home() {
+  // Pre-fetch featured cars data on the server
   const featuredCars = await getFeaturedCars();
-
+  
   return (
     <div className="flex flex-col pt-20">
-      {/* Hero Section with Gradient Title */}
+      {/* Hero Section with Gradient Title - critical render path */}
       <section className="relative py-16 md:py-28 dotted-background">
         <div className="max-w-4xl mx-auto text-center">
           <div className="mb-8">
             <h1 className="text-5xl md:text-8xl mb-4 gradient-title">
-            Your Dream Car Starts with Ryder AI
+              Your Dream Car Starts with Ryder AI
             </h1>
             <p className="text-xl text-[#2a2a2a] font-semibold mb-8 max-w-2xl mx-auto">
-  Advanced AI Car Search and test drive from thousands of vehicles.
-</p>
-
+              Advanced AI Car Search and test drive from thousands of vehicles.
+            </p>
           </div>
 
-          {/* Search Component (Client) */}
-          <HomeSearch />
+          {/* Search Component with loading state */}
+          <Suspense fallback={<div className="h-12 w-full bg-gray-100 rounded animate-pulse"></div>}>
+            <HomeSearch />
+          </Suspense>
         </div>
       </section>
 
-      {/* Featured Cars */}
+      {/* Featured Cars - lazy loaded */}
       <section className="py-12">
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center mb-8">
@@ -48,15 +82,20 @@ export default async function Home() {
               </Link>
             </Button>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {featuredCars.map((car) => (
-              <CarCard key={car.id} car={car} />
-            ))}
-          </div>
+          <Suspense fallback={
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="h-64 bg-gray-100 rounded animate-pulse"></div>
+              ))}
+            </div>
+          }>
+            {/* Pass the pre-fetched data to the wrapper component */}
+            <FeaturedCarsWrapper cars={featuredCars} />
+          </Suspense>
         </div>
       </section>
 
-      {/* Browse by Make */}
+      {/* Browse by Make - with priority loading for first few images */}
       <section className="py-12 bg-gray-50">
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center mb-8">
@@ -68,7 +107,7 @@ export default async function Home() {
             </Button>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-            {carMakes.map((make) => (
+            {carMakes.map((make, index) => (
               <Link
                 key={make.name}
                 href={`/cars?make=${make.name}`}
@@ -76,11 +115,11 @@ export default async function Home() {
               >
                 <div className="h-16 w-auto mx-auto mb-2 relative">
                   <Image
-                    src={
-                      make.imageUrl || `/make/${make.name.toLowerCase()}.webp`
-                    }
+                    src={make.imageUrl || `/make/${make.name.toLowerCase()}.webp`}
                     alt={make.name}
                     fill
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" 
+                    priority={index < 6} // Only prioritize first 6 images
                     style={{ objectFit: "contain" }}
                   />
                 </div>
@@ -91,7 +130,7 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* Why Choose Us */}
+      {/* Why Choose Us - simple section, no optimization needed */}
       <section className="py-16">
         <div className="container mx-auto px-4">
           <h2 className="text-2xl font-bold text-center mb-12">
@@ -131,7 +170,7 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* Browse by Body Type */}
+      {/* Browse by Body Type - lazy load images */}
       <section className="py-12 bg-gray-50">
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center mb-8">
@@ -151,16 +190,16 @@ export default async function Home() {
               >
                 <div className="overflow-hidden rounded-lg flex justify-end h-28 mb-4 relative">
                   <Image
-                    src={
-                      type.imageUrl || `/body/${type.name.toLowerCase()}.webp`
-                    }
+                    src={type.imageUrl || `/body/${type.name.toLowerCase()}.webp`}
                     alt={type.name}
                     fill
+                    loading="lazy"
+                    sizes="(max-width: 768px) 50vw, 25vw"
                     className="object-cover group-hover:scale-105 transition duration-300"
                   />
                 </div>
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent rounded-lg flex items-end">
-                  <h3 className="text-white text-xl font-bold pl-4 pb-2 ">
+                  <h3 className="text-white text-xl font-bold pl-4 pb-2">
                     {type.name}
                   </h3>
                 </div>
@@ -170,24 +209,26 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* FAQ Section with Accordion */}
+      {/* FAQ Section with Accordion - lazy loaded */}
       <section className="py-12 bg-gray-50">
         <div className="container mx-auto px-4">
           <h2 className="text-2xl font-bold text-center mb-8">
             Frequently Asked Questions
           </h2>
-          <Accordion type="single" collapsible className="w-full">
-            {faqItems.map((faq, index) => (
-              <AccordionItem key={index} value={`item-${index}`}>
-                <AccordionTrigger>{faq.question}</AccordionTrigger>
-                <AccordionContent>{faq.answer}</AccordionContent>
-              </AccordionItem>
-            ))}
-          </Accordion>
+          <Suspense fallback={<div className="h-64 w-full bg-gray-100 rounded animate-pulse"></div>}>
+            <Accordion type="single" collapsible className="w-full">
+              {faqItems.map((faq, index) => (
+                <AccordionItem key={index} value={`item-${index}`}>
+                  <AccordionTrigger>{faq.question}</AccordionTrigger>
+                  <AccordionContent>{faq.answer}</AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
+          </Suspense>
         </div>
       </section>
 
-      {/* CTA Section */}
+      {/* CTA Section - simple section, no optimization needed */}
       <section className="py-16 dotted-background text-[#0f0f0f]">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-3xl font-bold mb-4">
