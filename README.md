@@ -16,7 +16,7 @@
 
 - Fully responsive UI using Next.js and ShadCN UI
 
-### Make sure to create a .env file with following variables -
+### Create a .env file with following variables
 
 ```shell
 DATABASE_URL=
