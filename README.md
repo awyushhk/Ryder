@@ -1,4 +1,4 @@
-<h1 align="center">Full Stack AI Car Marketplace with NextJS, Tailwind CSS, Supabase, Prisma, Clerk, ArcJet, Shadcn UI</h1>
+<h1 align="center">AI Car Marketplace with NextJS, Tailwind CSS, Supabase, Prisma, Clerk, ArcJet, Shadcn UI</h1>
 
 ![Demo App](public/Screenshot%202026-01-24%20045928.png)
 
