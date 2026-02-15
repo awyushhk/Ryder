@@ -4,8 +4,14 @@ import { serializeCarData } from "@/lib/helpers";
 import { db } from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
+import aj from "@/lib/arcjet";
+import { headers } from "next/headers";
 
 export async function getAdmin() {
+   await aj.protect({
+    request: { headers: headers() },
+  });
+
   const { userId } = await auth();
   if (!userId) throw new Error("Unauthorized");
 
@@ -26,6 +32,10 @@ export async function getAdmin() {
  */
 export async function getAdminTestDrives({ search = "", status = "" }) {
   try {
+      await aj.protect({
+      request: { headers: headers() },
+    });
+
     const { userId } = await auth();
     if (!userId) throw new Error("Unauthorized");
 
@@ -120,6 +130,10 @@ export async function getAdminTestDrives({ search = "", status = "" }) {
  */
 export async function updateTestDriveStatus(bookingId, newStatus) {
   try {
+    await aj.protect({
+      request: { headers: headers() },
+    });
+
     const { userId } = await auth();
     if (!userId) throw new Error("Unauthorized");
 
@@ -177,6 +191,10 @@ export async function updateTestDriveStatus(bookingId, newStatus) {
 
 export async function getDashboardData() {
   try {
+    await aj.protect({
+      request: { headers: headers() },
+    });
+    
     if (process.env.NEXT_PHASE === "phase-production-build") {
       return {
         success: true,
