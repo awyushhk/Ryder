@@ -177,6 +177,30 @@ export async function updateTestDriveStatus(bookingId, newStatus) {
 
 export async function getDashboardData() {
   try {
+    if (process.env.NEXT_PHASE === "phase-production-build") {
+      return {
+        success: true,
+        data: {
+          cars: {
+            total: 0,
+            available: 0,
+            sold: 0,
+            unavailable: 0,
+            featured: 0,
+          },
+          testDrives: {
+            total: 0,
+            pending: 0,
+            confirmed: 0,
+            completed: 0,
+            cancelled: 0,
+            noShow: 0,
+            conversionRate: 0,
+          },
+        },
+      };
+    }
+
     const { userId } = await auth();
     if (!userId) throw new Error("Unauthorized");
 

@@ -3,6 +3,8 @@ import CarFilters from "./_components/car-filters";
 import CarListings from "./_components/cars-listing";
 import { getCarFilters } from "@/actions/car-listing";
 
+export const dynamic = "force-dynamic";
+
 export const metadata = {
   title: "Cars | Ryder",
   description: "Browse and search for your dream car",

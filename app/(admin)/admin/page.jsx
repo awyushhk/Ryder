@@ -1,6 +1,8 @@
 import { getDashboardData } from "@/actions/admin";
 import { Dashboard } from "./_components/dashboard";
 
+export const dynamic = "force-dynamic";
+
 export const metadata = {
   title: "Dashboard | Ryder Admin",
   description: "Admin dashboard for Ryder car marketplace",

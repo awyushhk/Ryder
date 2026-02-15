@@ -2,6 +2,8 @@ import { getCarById } from "@/actions/car-listing";
 import { notFound } from "next/navigation";
 import CarDetails from "./_components/car-details";
 
+export const dynamic = "force-dynamic";
+
 export async function generateMetadata({ params }) {
   const { id } = await params;
   const result = await getCarById(id);

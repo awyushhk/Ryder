@@ -3,6 +3,8 @@ import Sidebar from "./admin/_components/sidebar";
 import { getAdmin } from "@/actions/admin";
 import { notFound } from "next/navigation";
 
+export const dynamic = "force-dynamic"; // ADDED THIS
+
 export default async function AdminLayout({ children }) {
     const admin = await getAdmin();
   
