@@ -1,6 +1,6 @@
 <h1 align="center">AI Car Marketplace with NextJS, Tailwind CSS, Supabase, Prisma, Clerk, ArcJet, Shadcn UI</h1>
 
- **Live App**: [ryder-ai.vercel.app](https://ryder-ai.vercel.app)
+## 🔗Live App: [ryder-ai.vercel.app](https://ryder-ai.vercel.app)
 
 ![Demo App](public/Screenshot%202026-01-24%20045928.png)
 
