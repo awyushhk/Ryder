@@ -40,36 +40,52 @@ export async function processCarImageWithAI(file) {
 
     // Define the prompt for car detail extraction
     const prompt = `
-        Analyze this car image and extract the following information:
-        1. Make (manufacturer)
-        2. Model
-        3. Year (approximately)
-        4. Color
-        5. Body type (SUV, Sedan, Hatchback, etc.)
-        6. Mileage
-        7. Fuel type (your best guess)
-        8. Transmission type (your best guess)
-        9. Price (your best guess)
-        9. Short Description as to be added to a car listing
-  
-        Format your response as a clean JSON object with these fields:
-        {
-          "make": "",
-          "model": "",
-          "year": 0000,
-          "color": "",
-          "price": "",
-          "mileage": "",
-          "bodyType": "",
-          "fuelType": "",
-          "transmission": "",
-          "description": "",
-          "confidence": 0.0
-        }
-  
-        For confidence, provide a value between 0 and 1 representing how confident you are in your overall identification.
-        Only respond with the JSON object, nothing else.
-      `;
+Analyze the provided car image and identify the vehicle details.
+
+Extract or estimate the following information. If something cannot be determined with certainty, make a reasonable estimate based on visual cues and typical specifications of that vehicle type.
+
+Required fields:
+1. Make (manufacturer)
+2. Model
+3. Year (approximate manufacturing year)
+4. Color
+5. Body type (SUV, Sedan, Hatchback, Coupe, Pickup, MPV, etc.)
+6. Mileage (estimate the fuel efficiency of the car in km/l as a number)
+7. Fuel type (Petrol, Diesel, Hybrid, Electric)
+8. Transmission type (Manual or Automatic)
+9. Number of seats
+10. Estimated resale price in INR (return a single integer only)
+11. Short car listing description (1–2 sentences suitable for a marketplace listing)
+
+Important rules:
+- Do NOT leave any field empty.
+- If the exact value is unknown, estimate based on the car's appearance and common specifications.
+- Mileage must represent fuel efficiency in km/l and must be a numeric value only (example: 18).
+- Price must be a numeric value only (no ₹, $, commas, ranges, or words like lakh/crore).
+- Seats must be a number.
+- Year must be a number.
+- Output must be valid JSON only.
+- Do NOT include explanations or markdown.
+
+Return the response strictly in this JSON format:
+
+{
+  "make": "",
+  "model": "",
+  "year": 0000,
+  "color": "",
+  "price": 0,
+  "mileage": 0,
+  "bodyType": "",
+  "fuelType": "",
+  "transmission": "",
+  "seats": 0,
+  "description": "",
+  "confidence": 0.0
+}
+
+Confidence should be a number between 0 and 1 indicating overall certainty.
+`;
 
     // Get response from Gemini
     const result = await model.generateContent([imagePart, prompt]);

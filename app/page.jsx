@@ -57,10 +57,10 @@ export default async function Home() {
         <div className="max-w-4xl mx-auto text-center">
           <div className="mb-8">
             <h1 className="text-5xl md:text-8xl mb-4 gradient-title">
-              Your Dream Car Starts with Ryder AI
+              Find Your Perfect Ride with Ryder
             </h1>
             <p className="text-xl text-[#2a2a2a] font-semibold mb-8 max-w-2xl mx-auto">
-              Advanced AI Car Search and test drive from thousands of vehicles.
+              See a car you love? Upload the image, find it instantly, and book a test drive.
             </p>
           </div>
 

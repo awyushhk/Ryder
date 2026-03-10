@@ -8,8 +8,9 @@ import aj from "@/lib/arcjet";
 import { headers } from "next/headers";
 
 export async function getAdmin() {
-   await aj.protect({
+  await aj.protect({
     request: { headers: headers() },
+    requested: 1,
   });
 
   const { userId } = await auth();
@@ -18,7 +19,7 @@ export async function getAdmin() {
   const user = await db.user.findUnique({
     where: { clerkUserId: userId },
   });
-
+  
   // If user not found in our db or not an admin, return not authorized
   if (!user || user.role !== "ADMIN") {
     return { authorized: false, reason: "not-admin" };
