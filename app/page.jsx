@@ -14,23 +14,25 @@ import { Button } from "@/components/ui/button";
 // Lazy load components that aren't needed immediately
 const HomeSearch = dynamic(() => import("@/components/home-search"), {
   ssr: true,
-  loading: () => <div className="h-12 w-full bg-gray-100 rounded animate-pulse"></div>
+  loading: () => (
+    <div className="h-12 w-full bg-gray-100 rounded animate-pulse"></div>
+  ),
 });
 
-const Accordion = dynamic(() => 
-  import("@/components/ui/accordion").then((mod) => mod.Accordion)
+const Accordion = dynamic(() =>
+  import("@/components/ui/accordion").then((mod) => mod.Accordion),
 );
 
-const AccordionContent = dynamic(() => 
-  import("@/components/ui/accordion").then((mod) => mod.AccordionContent)
+const AccordionContent = dynamic(() =>
+  import("@/components/ui/accordion").then((mod) => mod.AccordionContent),
 );
 
-const AccordionItem = dynamic(() => 
-  import("@/components/ui/accordion").then((mod) => mod.AccordionItem)
+const AccordionItem = dynamic(() =>
+  import("@/components/ui/accordion").then((mod) => mod.AccordionItem),
 );
 
-const AccordionTrigger = dynamic(() => 
-  import("@/components/ui/accordion").then((mod) => mod.AccordionTrigger)
+const AccordionTrigger = dynamic(() =>
+  import("@/components/ui/accordion").then((mod) => mod.AccordionTrigger),
 );
 
 // Instead of dynamically importing the FeaturedCarsSection component,
@@ -43,31 +45,84 @@ const FeaturedCarsWrapper = dynamic(() => import("@/components/featuredCars"), {
         <div key={i} className="h-64 bg-gray-100 rounded animate-pulse"></div>
       ))}
     </div>
-  )
+  ),
 });
 
 export default async function Home() {
   // Pre-fetch featured cars data on the server
   const featuredCars = await getFeaturedCars();
-  
+
   return (
     <div className="flex flex-col pt-20">
       {/* Hero Section with Gradient Title - critical render path */}
-      <section className="relative py-16 md:py-28 dotted-background">
-        <div className="max-w-4xl mx-auto text-center">
-          <div className="mb-8">
-            <h1 className="text-5xl md:text-8xl mb-4 gradient-title">
-              Find Your Perfect Ride with Ryder
-            </h1>
-            <p className="text-xl text-[#2a2a2a] font-semibold mb-8 max-w-2xl mx-auto">
-              See a car you love? Upload the image, find it instantly, and book a test drive.
-            </p>
+      <section
+        className="relative py-16 md:py-0 md:min-h-[500px] bg-white flex items-center"
+        style={{ overflow: "hidden" }}
+      >
+        <div className="w-full max-w-7xl mx-auto pl-2 pr-6 md:pl-4 md:pr-12 flex flex-col md:flex-row items-center gap-8 md:gap-0">
+          {/* LEFT: unchanged */}
+          <div className="flex-1 z-10 text-center md:text-left max-w-xl">
+            <div className="mb-8">
+              <h1 className="text-5xl md:text-8xl mb-4 gradient-title">
+                Find Your Perfect Ride with Ryder
+              </h1>
+              <p className="text-xl text-[#2a2a2a] font-semibold mb-8 max-w-2xl mx-auto md:mx-0">
+                See a car you love? Upload the image, find it instantly, and
+                book a test drive.
+              </p>
+            </div>
+            <Suspense
+              fallback={
+                <div className="h-12 w-full bg-gray-100 rounded animate-pulse" />
+              }
+            >
+              <HomeSearch />
+            </Suspense>
           </div>
 
-          {/* Search Component with loading state */}
-          <Suspense fallback={<div className="h-12 w-full bg-gray-100 rounded animate-pulse"></div>}>
-            <HomeSearch />
-          </Suspense>
+          {/* RIGHT: bleeds to screen edge */}
+          <div
+            className="relative flex items-center justify-center min-h-[320px] md:min-h-[500px]"
+            style={{
+              flex: "1",
+              marginRight:
+                "calc(-50vw + 50%)" /* breaks out of max-w container */,
+              paddingRight: "0",
+            }}
+          >
+  
+            {/* Blue polygon background */}
+            <div className="absolute inset-0 z-0 overflow-visible">
+  <img
+    src="/hero-bg.png"
+    alt=""
+    className="
+      absolute
+      right-0
+      top-0
+      w-[140%] md:w-[110%]
+      h-auto
+      max-w-none
+      object-contain
+      md:top-[-15%]
+      md:right-[-10%]
+    "
+  />
+</div>
+
+            {/* Car image */}
+            <img
+              src="/hero.png"
+              alt="Rental car"
+              className="relative z-10 object-contain"
+              style={{
+                width: "110%",
+                maxWidth: "750px",
+                transform: "translateX(-5%) translateY(4%)",
+                filter: "drop-shadow(0 16px 32px rgba(0,0,0,0.15))",
+              }}
+            />
+          </div>
         </div>
       </section>
 
@@ -82,13 +137,18 @@ export default async function Home() {
               </Link>
             </Button>
           </div>
-          <Suspense fallback={
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {[1, 2, 3].map((i) => (
-                <div key={i} className="h-64 bg-gray-100 rounded animate-pulse"></div>
-              ))}
-            </div>
-          }>
+          <Suspense
+            fallback={
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {[1, 2, 3].map((i) => (
+                  <div
+                    key={i}
+                    className="h-64 bg-gray-100 rounded animate-pulse"
+                  ></div>
+                ))}
+              </div>
+            }
+          >
             {/* Pass the pre-fetched data to the wrapper component */}
             <FeaturedCarsWrapper cars={featuredCars} />
           </Suspense>
@@ -115,10 +175,12 @@ export default async function Home() {
               >
                 <div className="h-16 w-auto mx-auto mb-2 relative">
                   <Image
-                    src={make.imageUrl || `/make/${make.name.toLowerCase()}.webp`}
+                    src={
+                      make.imageUrl || `/make/${make.name.toLowerCase()}.webp`
+                    }
                     alt={make.name}
                     fill
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" 
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     priority={index < 6} // Only prioritize first 6 images
                     style={{ objectFit: "contain" }}
                   />
@@ -190,7 +252,9 @@ export default async function Home() {
               >
                 <div className="overflow-hidden rounded-lg flex justify-end h-28 mb-4 relative">
                   <Image
-                    src={type.imageUrl || `/body/${type.name.toLowerCase()}.webp`}
+                    src={
+                      type.imageUrl || `/body/${type.name.toLowerCase()}.webp`
+                    }
                     alt={type.name}
                     fill
                     loading="lazy"
@@ -215,7 +279,11 @@ export default async function Home() {
           <h2 className="text-2xl font-bold text-center mb-8">
             Frequently Asked Questions
           </h2>
-          <Suspense fallback={<div className="h-64 w-full bg-gray-100 rounded animate-pulse"></div>}>
+          <Suspense
+            fallback={
+              <div className="h-64 w-full bg-gray-100 rounded animate-pulse"></div>
+            }
+          >
             <Accordion type="single" collapsible className="w-full">
               {faqItems.map((faq, index) => (
                 <AccordionItem key={index} value={`item-${index}`}>

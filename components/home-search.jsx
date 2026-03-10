@@ -144,7 +144,7 @@ function HomeSearch() {
       {isImageSearchActive && (
         <div className="mt-4">
           <form onSubmit={handleImageSearch} className="space-y-4">
-            <div className="border-2 border-dashed border-white rounded-3xl p-6 text-center">
+            <div className="border-2 border-dashed border-black rounded-3xl p-6 text-center">
               {imagePreview ? (
                 <div className="flex flex-col items-center">
                   <img
