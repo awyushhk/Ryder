@@ -250,7 +250,7 @@ export function TestDriveForm({ car, testDriveInfo }) {
               <div className="flex justify-between py-1 border-b">
                 <span>Mileage</span>
                 <span className="font-medium">
-                  {car.mileage.toLocaleString()} miles
+                  {car.mileage.toLocaleString()} km/l
                 </span>
               </div>
               <div className="flex justify-between py-1 border-b">

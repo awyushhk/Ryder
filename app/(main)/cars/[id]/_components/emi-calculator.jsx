@@ -75,8 +75,12 @@ function EmiCalculator({ price = 1000 }) {
     calculateLoan(loanAmount, downPayment, interestRate, loanTenure);
   }, []);
 
-  const formatNumber = (num) => {
-    return new Intl.NumberFormat("en-US").format(num);
+  const formatCurrency = (num) => {
+    return new Intl.NumberFormat("en-IN", {
+      style: "currency",
+      currency: "INR",
+      maximumFractionDigits: 0,
+    }).format(num);
   };
 
   return (
@@ -94,7 +98,7 @@ function EmiCalculator({ price = 1000 }) {
             <div className="space-y-3">
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <span className="text-gray-700 dark:text-gray-300">$</span>
+                  <span className="text-gray-700 dark:text-gray-300">₹</span>
                 </div>
                 <input
                   type="number"
@@ -125,7 +129,7 @@ function EmiCalculator({ price = 1000 }) {
             <div className="space-y-3">
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <span className="text-gray-700 dark:text-gray-300">$</span>
+                  <span className="text-gray-700 dark:text-gray-300">₹</span>
                 </div>
                 <input
                   type="number"
@@ -232,7 +236,7 @@ function EmiCalculator({ price = 1000 }) {
                   Monthly Payment
                 </div>
                 <div className="text-3xl font-bold text-gray-900 dark:text-white mt-1">
-                  ${formatNumber(results.emi)}
+                  {formatCurrency(results.emi)}
                 </div>
               </div>
 
@@ -242,7 +246,7 @@ function EmiCalculator({ price = 1000 }) {
                     Vehicle Price
                   </div>
                   <div className="text-lg font-bold text-gray-900 dark:text-white mt-1">
-                    ${formatNumber(loanAmount)}
+                    {formatCurrency(loanAmount)}
                   </div>
                 </div>
 
@@ -251,7 +255,7 @@ function EmiCalculator({ price = 1000 }) {
                     Down Payment
                   </div>
                   <div className="text-lg font-bold text-gray-900 dark:text-white mt-1">
-                    ${formatNumber(results.downPayment)}
+                    {formatCurrency(results.downPayment)}
                   </div>
                 </div>
 
@@ -260,7 +264,7 @@ function EmiCalculator({ price = 1000 }) {
                     Loan Amount
                   </div>
                   <div className="text-lg font-bold text-gray-900 dark:text-white mt-1">
-                    ${formatNumber(results.loanPrincipal)}
+                    {formatCurrency(results.loanPrincipal)}
                   </div>
                 </div>
 
@@ -269,7 +273,7 @@ function EmiCalculator({ price = 1000 }) {
                     Total Interest
                   </div>
                   <div className="text-lg font-bold text-gray-900 dark:text-white mt-1">
-                    ${formatNumber(results.totalInterest)}
+                    {formatCurrency(results.totalInterest)}
                   </div>
                 </div>
 
@@ -278,10 +282,9 @@ function EmiCalculator({ price = 1000 }) {
                     Total Amount (Down Payment + Total Payments)
                   </div>
                   <div className="text-lg font-bold text-gray-900 dark:text-white mt-1">
-                    $
-                    {formatNumber(
+                    {formatCurrency(
                       parseFloat(results.downPayment) +
-                        parseFloat(results.totalPayment)
+                        parseFloat(results.totalPayment),
                     )}
                   </div>
                 </div>

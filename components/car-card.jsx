@@ -100,7 +100,11 @@ const CarCard = ({ car }) => {
             {car.make} {car.model}
           </h3>
           <span className="text-xl font-bold text-blue-600">
-            ${car.price.toLocaleString()}
+            {new Intl.NumberFormat("en-IN", {
+              style: "currency",
+              currency: "INR",
+              maximumFractionDigits: 0,
+            }).format(car.price)}
           </span>
         </div>
 
@@ -117,7 +121,7 @@ const CarCard = ({ car }) => {
             {car.bodyType}
           </Badge>
           <Badge variant="outline" className="bg-gray-50">
-            {car.mileage.toLocaleString()} miles
+            {car.mileage.toLocaleString()} km/l
           </Badge>
           <Badge variant="outline" className="bg-gray-50">
             {car.color}
