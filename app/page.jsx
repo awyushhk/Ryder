@@ -90,13 +90,12 @@ export default async function Home() {
               paddingRight: "0",
             }}
           >
-  
             {/* Blue polygon background */}
             <div className="absolute inset-0 z-0 overflow-visible">
-  <img
-    src="/hero-bg.png"
-    alt=""
-    className="
+              <img
+                src="/hero-bg.png"
+                alt=""
+                className="
       absolute
       right-0
       top-0
@@ -107,8 +106,8 @@ export default async function Home() {
       md:top-[-15%]
       md:right-[-10%]
     "
-  />
-</div>
+              />
+            </div>
 
             {/* Car image */}
             <img

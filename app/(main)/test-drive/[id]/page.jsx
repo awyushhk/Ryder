@@ -11,7 +11,12 @@ export async function generateMetadata() {
 
 export default async function TestDrivePage({ params }) {
   // Fetch car details
-  const { id } = params;
+  const { id } = await params;
+
+  if (!id) {
+    notFound();
+  }
+
   const result = await getCarById(id);
 
   // If car not found, show 404
