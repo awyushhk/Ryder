@@ -1,4 +1,4 @@
-<h1 align="center">AI Car Marketplace with NextJS, Tailwind CSS, Supabase, Prisma, Clerk, ArcJet, Shadcn UI</h1>
+<h1 align="center">AI Car Marketplace with NextJS, Tailwind CSS, NeonDB, Prisma, Clerk, ArcJet, Shadcn UI</h1>
 
 ## 🔗Live App: [ryder-ai.vercel.app](https://ryder-ai.vercel.app)
 
@@ -23,18 +23,24 @@
 ### Create a .env file with following variables
 
 ```shell
+# Database
 DATABASE_URL=
-DIRECT_URL=
 
+# Clerk Authentication
 NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=
 CLERK_SECRET_KEY=
 NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
 NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up
-NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL=/onboarding
-NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL=/onboarding
 
+# Google Gemini AI
 GEMINI_API_KEY=
 
+# Cloudinary (Image Storage)
+CLOUDINARY_CLOUD_NAME=
+CLOUDINARY_API_KEY=
+CLOUDINARY_API_SECRET=
+
+# Arcjet (Rate Limiting)
 ARCJET_KEY=
 ```
 
